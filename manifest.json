@@ -10,7 +10,7 @@
   "host_permissions": ["https://www.fiverr.com/*"],
   "content_scripts": [
     {
-      "matches": ["https://www.fiverr.com/*"],
+      "matches": ["https://www.fiverr.com/users/*"],
       "js": ["content.js"]
     }
   ],

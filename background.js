@@ -1,32 +1,40 @@
-// automatic page refresh
+// === FIVERR MESSAGE NOTIFICATION ===
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.newMessage && request.username) {
+    chrome.notifications.create({
+      type: "basic",
+      iconUrl: "icons/icon128.png",
+      title: "New Fiverr Message!",
+      message: `New message on Fiverr account: ${request.username}`,
+      priority: 2,
+    });
 
-chrome.alarms.create("refreshPage", { periodInMinutes: 3 });
-
-chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === "refreshPage") {
-    chrome.tabs.query({ url: "https://www.fiverr.com/*" }, (tabs) => {
+    // additional sound notification ~ MANUAL SETTING (Notification, Sound)
+    chrome.tabs.query({ url: "*://www.fiverr.com/users/*" }, (tabs) => {
       tabs.forEach((tab) => {
-        chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          function: () => location.reload()
+        chrome.tabs.sendMessage(tab.id, {
+          type: "playSound",
+          username: request.username,
         });
       });
     });
   }
 });
 
-// Check for new message notifications
 
-chrome.runtime.onMessage.addListener((message) => {
-  if (message.newMessage) {
-    chrome.notifications.create({
-      type: "basic",
-      iconUrl: "icons/icon128.png",
-      title: "New Fiverr Message!",
-      message: "You have a new message on Fiverr.",
-    });
+// === AUTOMATIC PAGE REFRESHER ===
 
-    const audio = new Audio(chrome.runtime.getURL("sounds/notification.mp3"));
-    audio.play();
-  }
-});
+// chrome.alarms.create("refreshPage", { periodInMinutes: 3 });
+
+// chrome.alarms.onAlarm.addListener((alarm) => {
+//   if (alarm.name === "refreshPage") {
+//     chrome.tabs.query({ url: "https://www.fiverr.com/*" }, (tabs) => {
+//       tabs.forEach((tab) => {
+//         chrome.scripting.executeScript({
+//           target: { tabId: tab.id },
+//           function: () => location.reload()
+//         });
+//       });
+//     });
+//   }
+// });
